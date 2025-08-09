@@ -23,10 +23,42 @@ except Exception as e:
 # Text cleaning function
 def clean_text(text):
     text = text.lower()
-    text = re.sub(r'[^a-zA-Z\s]', '', text)         # remove punctuation/numbers
+    text = re.sub(r'[^a-zA-Z\s]', '', text)  # remove punctuation/numbers
     tokens = text.split()
     tokens = [word for word in tokens if word not in stop_words]
     return ' '.join(tokens)
+
+# ---------------------------
+# Recommendation dictionary
+recommendations = {
+    "Data Science": [
+        "Data Analyst",
+        "Machine Learning Engineer",
+        "AI Engineer",
+        "Business Intelligence Analyst"
+    ],
+    "Web Development": [
+        "Frontend Developer",
+        "Backend Developer",
+        "Full Stack Developer",
+        "Web Designer"
+    ],
+    "Design": [
+        "UI/UX Designer",
+        "Graphic Designer",
+        "Product Designer"
+    ],
+    "Marketing": [
+        "Digital Marketing Specialist",
+        "SEO Analyst",
+        "Social Media Manager"
+    ],
+    "Software Engineering": [
+        "Software Developer",
+        "Application Developer",
+        "Systems Engineer"
+    ]
+}
 
 # ---------------------------
 # Streamlit UI
@@ -45,7 +77,17 @@ if st.button("🔍 Predict Category"):
 
         # Predict
         try:
-            prediction = model.predict(transformed)[0]
-            st.success(f"🎯 Predicted Job Category: **{prediction}**")
+            predicted_category = model.predict(transformed)[0]
+            st.success(f"🎯 Predicted Job Category: **{predicted_category}**")
+
+            # Show recommendations if available
+            if predicted_category in recommendations:
+                st.markdown("### 💡 Recommended Roles:")
+                for role in recommendations[predicted_category]:
+                    st.write(f"- {role}")
+            else:
+                st.info("No specific recommendations available for this category.")
+
         except Exception as e:
             st.error(f"Prediction failed: {e}")
+
